@@ -54,7 +54,6 @@ class Example(Frame):
         self.onlyNP = False  ## for exporting sequence 
         self.keepRecommend = True
         
-
         '''
         self.seged: for exporting sequence, if True then split words with space, else split character without space
         for example, if your data is segmentated Chinese (or English) with words seperated by a space, you need to set this flag as true
@@ -78,7 +77,6 @@ class Example(Frame):
         
         
     def initUI(self):
-      
         self.parent.title(self.Version)
         self.pack(fill=BOTH, expand=True)
         
@@ -116,7 +114,6 @@ class Example(Frame):
 
         exportbtn = Button(self, text="Export", command=self.generateSequenceFile)
         exportbtn.grid(row=5, column=self.textColumn + 1, pady=4)
-        
 
         cbtn = Button(self, text="Quit", command=self.quit)
         cbtn.grid(row=6, column=self.textColumn + 1, pady=4)
@@ -139,16 +136,12 @@ class Example(Frame):
         # b = Radiobutton(self.parent, text="NotRecommend",   width=12,  variable=recommend_value, value="N")
         # # b.grid(row =1 , column = 3)
         # b.pack(side='left')
-       
 
         lbl_entry = Label(self, text="Command:")
         lbl_entry.grid(row = self.textRow +1,  sticky = E+W+S+N, pady=4,padx=4)
         self.entry = Entry(self)
         self.entry.grid(row = self.textRow +1, columnspan=self.textColumn + 1, rowspan = 1, sticky = E+W+S+N, pady=4, padx=80)
         self.entry.bind('<Return>', self.returnEnter)
-
-        
-
         
         # for press_key in self.pressCommand.keys():
         for idx in range(0, len(self.allKey)):
@@ -164,9 +157,9 @@ class Example(Frame):
                 altPlusKey = "<Command-Key-" + press_key + ">"
                 self.text.bind(altPlusKey, self.keepCurrent)
 
-
         self.text.bind('<Control-Key-z>', self.backToHistory)
-        ## disable the default  copy behaivour when right click. For MacOS, right click is button 2, other systems are button3
+        # disable the default copy behaviour when right click.
+        # For MacOS, right click is button2, other systems are button3
         self.text.bind('<Button-2>', self.rightClick)
         self.text.bind('<Button-3>', self.rightClick)
 
@@ -198,8 +191,7 @@ class Example(Frame):
         # start_index = ("%s - %sc" % (cursor_index, 5))
         # end_index = ("%s + %sc" % (cursor_index, 5))
         # self.text.tag_add('SEL', '1.0',"end-1c")
-        
-        
+
 
     ## Disable right click default copy selection behaviour
     def rightClick(self, event):
@@ -212,6 +204,7 @@ class Example(Frame):
             self.writeFile(self.fileName, content, cursor_index)
         except TclError:
             pass
+
 
     def setInRecommendModel(self):
         self.recommendFlag = True
@@ -246,11 +239,13 @@ class Example(Frame):
             self.text.mark_set(INSERT, "1.0")
             self.setCursorLabel(self.text.index(INSERT))
 
+
     def readFile(self, filename):
         f = open(filename, "rU")
         text = f.read()
         self.fileName = filename
         return text
+
 
     def setFont(self, value):
         _family=self.textFontStyle
@@ -259,9 +254,11 @@ class Example(Frame):
         _underline=0
         fnt = tkFont.Font(family= _family,size= _size,weight= _weight,underline= _underline)
         Text(self, font=fnt)
-    
+
+
     def setNameLabel(self, new_file):
         self.lbl.config(text=new_file)
+
 
     def setCursorLabel(self, cursor_index):
         if self.debug:
@@ -269,6 +266,7 @@ class Example(Frame):
         row_column = cursor_index.split('.')
         cursor_text = ("row: %s\ncol: %s" % (row_column[0], row_column[-1]))
         self.cursorIndex.config(text=cursor_text)
+
 
     def returnButton(self):
         if self.debug:
@@ -319,6 +317,7 @@ class Example(Frame):
             print "History is empty!"
         self.text.insert(INSERT, 'p')   # add a word as pad for key release delete
 
+
     def keepCurrent(self, event):
         if self.debug:
             print "Action Track: keepCurrent"
@@ -326,6 +325,7 @@ class Example(Frame):
         print "before:", self.text.index(INSERT)
         self.text.insert(INSERT, 'p')
         print "after:", self.text.index(INSERT)
+
 
     def clearCommand(self):
         if self.debug:
@@ -337,6 +337,7 @@ class Example(Frame):
         textContent = self.text.get("1.0","end-1c")
         textContent = textContent.encode('utf-8')
         return textContent
+
 
     def executeCursorCommand(self,command):
         if self.debug:
@@ -479,7 +480,6 @@ class Example(Frame):
         self.writeFile(self.fileName, content, last_insert)
 
 
-
     def replaceString(self, content, string, replaceType, cursor_index):
         if replaceType in self.pressCommand:
             new_string = "[@" + string + "#" + self.pressCommand[replaceType] + "*]" 
@@ -513,6 +513,7 @@ class Example(Frame):
         else:
             print "Don't write to empty file!"        
 
+
     def addRecommendContent(self, train_data, decode_data, recommendMode):
         if not recommendMode:
             content = train_data + decode_data
@@ -521,6 +522,7 @@ class Example(Frame):
                 print "Action Track: addRecommendContent, start Recommend entity"
             content = maximum_matching(train_data, decode_data)
         return content
+
 
     def autoLoadNewFile(self, fileName, newcursor_index):
         if self.debug:
@@ -576,7 +578,7 @@ class Example(Frame):
 
             self.text.tag_add("catagory", second_pos, lastsecond_pos)
             self.text.tag_add("edge", first_pos, second_pos)
-            self.text.tag_add("edge", lastsecond_pos, last_pos)   
+            self.text.tag_add("edge", lastsecond_pos, last_pos)
         ## color recommend type
         while True:
             self.text.tag_configure("recommend", background=self.recommendColor)
@@ -590,7 +592,6 @@ class Example(Frame):
             # second_pos = "%s+%sc" % (recommend_pos, str(1))
             lastsecond_pos = "%s+%sc" % (recommend_pos, str(int(countVar.get())))
             self.text.tag_add("recommend", first_pos, lastsecond_pos)
-            
         
         ## color the most inside span for nested span, scan from begin to end again  
         if self.colorAllChunk:
@@ -612,6 +613,7 @@ class Example(Frame):
             last_pos = "%s + %sc" %(pos, str(int(countVar.get())-1))
             self.text.tag_add("insideEntityColor", first_pos, last_pos)   
     
+
     def pushToHistory(self):
         if self.debug:
             print "Action Track: pushToHistory"
@@ -623,6 +625,7 @@ class Example(Frame):
         currentList.append(cursorPosition)
         self.history.append(currentList)
 
+
     def pushToHistoryEvent(self,event):
         if self.debug:
             print "Action Track: pushToHistoryEvent"
@@ -633,6 +636,7 @@ class Example(Frame):
         currentList.append(content)
         currentList.append(cursorPosition)
         self.history.append(currentList)
+
 
     ## update shortcut map
     def renewPressCommand(self):
@@ -769,7 +773,6 @@ def getWordTagPairs(tagedSentence, seged=True, tagScheme="BMES", onlyNP=False, e
             else:
                 full_list.append([newSent[chunk_list[idx-1][2]:chunk_list[idx][1]], chunk_list[idx-1][2], chunk_list[idx][1], False])
                 full_list.append(chunk_list[idx])
-
         if idx == len(chunk_list) - 1 :
             if chunk_list[idx][2] > newSentLength:
                 print "ERROR: found pattern position larger than sentence length!"
@@ -845,10 +848,6 @@ def removeRecommendContent(content, recommendRe = r'\[\$.*?\#.*?\*\](?!\#)'):
     return output_content
 
 
-
-
-
-
 def decompositCommand(command_string):
     command_list = []
     each_command = []
@@ -866,7 +865,6 @@ def decompositCommand(command_string):
     return command_list
 
 
-
 def main():
     print("SUTDAnnotator launched!")
     print(("OS:%s")%(platform.system()))
@@ -879,8 +877,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
