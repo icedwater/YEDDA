@@ -20,7 +20,14 @@ import tkMessageBox
 
 
 class Example(Frame):
+    """
+    Defines the annotation GUI appearance and behaviour.
+    """
     def __init__(self, parent):
+        """
+        Configuration options are hard-coded here at create time.
+        The system caters for a config file but this is not provided.
+        """
         Frame.__init__(self, parent)
         self.Version = "YEDDA-V1.0 Annotator"
         self.OS = platform.system().lower()
@@ -50,16 +57,14 @@ class Example(Frame):
         else:
             self.textRow = 20
         self.textColumn = 5
-        self.tagScheme = "BMES"
+        self.tagScheme = "BMES" # anything else is assumed to be BIO
         self.onlyNP = False  ## for exporting sequence 
         self.keepRecommend = True
         
-        '''
-        self.seged: for exporting sequence, if True then split words with space, else split character without space
-        for example, if your data is segmentated Chinese (or English) with words seperated by a space, you need to set this flag as true
-        if your data is Chinese without segmentation, you need to set this flag as False
-        '''
-        self.seged = True  ## False for non-segmentated Chinese, True for English or Segmented Chinese
+        # When exporting data, if seged is set to True, words in a sequence
+        # are separated with spaces. For non-segmented data (e.g. Chinese),
+        # make sure the flag is set to False
+        self.seged = True
         self.configFile = "config"
         self.entityRe = r'\[\@.*?\#.*?\*\](?!\#)'
         self.insideNestEntityRe = r'\[\@\[\@(?!\[\@).*?\#.*?\*\]\#'
@@ -77,6 +82,11 @@ class Example(Frame):
         
         
     def initUI(self):
+        """
+        Initialises the window with the values configured above
+        By default, self.textColumn is 5 and self.textRow is 20
+        Buttons are defined and packed into boxes, which then go into the parent
+        """
         self.parent.title(self.Version)
         self.pack(fill=BOTH, expand=True)
         
@@ -172,8 +182,10 @@ class Example(Frame):
         self.enter.grid(row=self.textRow +1, column=self.textColumn +1) 
     
 
-    ## cursor index show with the left click
     def singleLeftClick(self, event):
+        """
+        Show cursor index where the left button is clicked
+        """
         if self.debug:
             print "Action Track: singleLeftClick"
         cursor_index = self.text.index(INSERT) 
@@ -182,8 +194,10 @@ class Example(Frame):
         self.cursorIndex.config(text=cursor_text)
 
     
-    ## TODO: select entity by double left click
     def doubleLeftClick(self, event):
+        """
+        TODO: select entity by double left click
+        """
         if self.debug:
             print "Action Track: doubleLeftClick"
         pass
@@ -193,8 +207,10 @@ class Example(Frame):
         # self.text.tag_add('SEL', '1.0',"end-1c")
 
 
-    ## Disable right click default copy selection behaviour
     def rightClick(self, event):
+        """
+        Disable right click default copy selection behaviour
+        """
         if self.debug:
             print "Action Track: rightClick"
         try:
@@ -207,12 +223,18 @@ class Example(Frame):
 
 
     def setInRecommendModel(self):
+        """
+        Activate recommendation model, or "RMOn"
+        """
         self.recommendFlag = True
         self.RecommendModelFlag.config(text = str(self.recommendFlag))
         tkMessageBox.showinfo("Recommend Model", "Recommend Model has been activated!")
 
 
     def setInNotRecommendModel(self):
+        """
+        Deactivate recommendation model, or "RMOff"
+        """
         self.recommendFlag = False 
         self.RecommendModelFlag.config(text = str(self.recommendFlag))
         content = self.getText()
@@ -222,6 +244,9 @@ class Example(Frame):
 
 
     def onOpen(self):
+        """
+        Control the File Open dialogue box.
+        """
         ftypes = [('all files', '.*'), ('text files', '.txt'), ('ann files', '.ann')]
         dlg = tkFileDialog.Open(self, filetypes = ftypes)
         # file_opt = options =  {}
@@ -241,6 +266,9 @@ class Example(Frame):
 
 
     def readFile(self, filename):
+        """
+        Read the selected file as text (e.g. for display in the textarea.)
+        """
         f = open(filename, "rU")
         text = f.read()
         self.fileName = filename
@@ -248,6 +276,9 @@ class Example(Frame):
 
 
     def setFont(self, value):
+        """
+        Change the font style to a hardcoded value.
+        """
         _family=self.textFontStyle
         _size = value
         _weight="bold"
@@ -257,10 +288,16 @@ class Example(Frame):
 
 
     def setNameLabel(self, new_file):
+        """
+        Update the title bar to reflect the new filename.
+        """
         self.lbl.config(text=new_file)
 
 
     def setCursorLabel(self, cursor_index):
+        """
+        Update the cursor label.
+        """
         if self.debug:
             print "Action Track: setCursorLabel"
         row_column = cursor_index.split('.')
@@ -269,6 +306,9 @@ class Example(Frame):
 
 
     def returnButton(self):
+        """
+        Define the Return button's behaviour.
+        """
         if self.debug:
             print "Action Track: returnButton"
         self.pushToHistory()
@@ -280,6 +320,9 @@ class Example(Frame):
 
 
     def returnEnter(self,event):
+        """
+        Define the Enter key's behaviour.
+        """
         if self.debug:
             print "Action Track: returnEnter"
         self.pushToHistory()
@@ -290,6 +333,9 @@ class Example(Frame):
 
 
     def textReturnEnter(self,event):
+        """
+        Define the Enter key's behaviour within the text field.
+        """
         press_key = event.char
         if self.debug:
             print "Action Track: textReturnEnter"
@@ -303,6 +349,9 @@ class Example(Frame):
 
 
     def backToHistory(self,event):
+        """
+        Undo the last change.
+        """
         if self.debug:
             print "Action Track: backToHistory"
         if len(self.history) > 0:
@@ -319,6 +368,9 @@ class Example(Frame):
 
 
     def keepCurrent(self, event):
+        """
+        ??? Insert 'p' at current location
+        """
         if self.debug:
             print "Action Track: keepCurrent"
         print("keep current, insert:%s"%(INSERT))
@@ -328,18 +380,27 @@ class Example(Frame):
 
 
     def clearCommand(self):
+        """
+        Clear the current command from the command box.
+        """
         if self.debug:
             print "Action Track: clearCommand"
         self.entry.delete(0, 'end')
 
 
     def getText(self):
+        """
+        ??? Get text content from self.text
+        """
         textContent = self.text.get("1.0","end-1c")
         textContent = textContent.encode('utf-8')
         return textContent
 
 
     def executeCursorCommand(self,command):
+        """
+        ??? Execute the command in the box at the current cursor position.
+        """
         if self.debug:
             print "Action Track: executeCursorCommand"
         content = self.getText()
@@ -433,6 +494,9 @@ class Example(Frame):
 
 
     def executeEntryCommand(self,command):
+        """
+        ??? Execute the entry command.
+        """
         if self.debug:
             print "Action Track: executeEntryCommand"
         if len(command) == 0:
@@ -464,6 +528,9 @@ class Example(Frame):
             
 
     def deleteTextInput(self,event):
+        """
+        ??? Delete the text input.
+        """
         if self.debug:
             print "Action Track: deleteTextInput"
         get_insert = self.text.index(INSERT)
@@ -481,6 +548,9 @@ class Example(Frame):
 
 
     def replaceString(self, content, string, replaceType, cursor_index):
+        """
+        ??? Replace current annotated entity with a different kind.
+        """
         if replaceType in self.pressCommand:
             new_string = "[@" + string + "#" + self.pressCommand[replaceType] + "*]" 
             newcursor_index = cursor_index.split('.')[0]+"."+str(int(cursor_index.split('.')[1])+len(self.pressCommand[replaceType])+5)
@@ -493,6 +563,9 @@ class Example(Frame):
 
 
     def writeFile(self, fileName, content, newcursor_index):
+        """
+        Write the textarea as a new '.ann' file or into existing one.
+        """
         if self.debug:
                 print "Action track: writeFile"
 
@@ -515,6 +588,9 @@ class Example(Frame):
 
 
     def addRecommendContent(self, train_data, decode_data, recommendMode):
+        """
+        ??? Show what is recommended, or just add train + decode
+        """
         if not recommendMode:
             content = train_data + decode_data
         else:
@@ -525,6 +601,9 @@ class Example(Frame):
 
 
     def autoLoadNewFile(self, fileName, newcursor_index):
+        """
+        Automatically reload the updated file at the previous cursor position
+        """
         if self.debug:
             print "Action Track: autoLoadNewFile"
         if len(fileName) > 0:
@@ -539,6 +618,9 @@ class Example(Frame):
             
 
     def setColorDisplay(self):
+        """
+        After the file is reloaded, reset the colours in the display.
+        """
         if self.debug:
             print "Action Track: setColorDisplay"
         self.text.config(insertbackground='red', insertwidth=4, font=self.fnt)
@@ -615,6 +697,9 @@ class Example(Frame):
     
 
     def pushToHistory(self):
+        """
+        ??? Add the current action to the history for undo/redo.
+        """
         if self.debug:
             print "Action Track: pushToHistory"
         currentList = []
@@ -627,6 +712,9 @@ class Example(Frame):
 
 
     def pushToHistoryEvent(self,event):
+        """
+        ??? Add the current event? to the history for undo/redo.
+        """
         if self.debug:
             print "Action Track: pushToHistoryEvent"
         currentList = []
@@ -638,8 +726,10 @@ class Example(Frame):
         self.history.append(currentList)
 
 
-    ## update shortcut map
     def renewPressCommand(self):
+        """
+        Update the shortcut map.
+        """
         if self.debug:
             print "Action Track: renewPressCommand"
         seq = 0
@@ -663,8 +753,10 @@ class Example(Frame):
         tkMessageBox.showinfo("Remap Notification", "Shortcut map has been updated!\n\nConfigure file has been saved in File:" + self.configFile)
 
 
-    ## show shortcut map
     def setMapShow(self):
+        """
+        Show the shortcut map.
+        """
         if os.path.isfile(self.configFile):
             with open (self.configFile, 'rb') as fp:
                 self.pressCommand = pickle.load(fp)
@@ -690,10 +782,16 @@ class Example(Frame):
 
 
     def getCursorIndex(self):
+        """
+        Retrieve cursor index.
+        """
         return self.text.index(INSERT)
 
 
     def generateSequenceFile(self):
+        """
+        Generate the sequence file in the indicated format (e.g., BIO).
+        """
         if (".ann" not in self.fileName) and (".txt" not in self.fileName): 
             out_error = "Export only works on filename ended in .ann or .txt!\nPlease rename file."
             print out_error
@@ -727,8 +825,20 @@ class Example(Frame):
         showMessage += "Saved to File: " + new_filename
         tkMessageBox.showinfo("Export Message", showMessage)
 
+"""
+End of the Example class; helper functions follow:
+
+getWordTagPairs,
+turnFullListToOutputPair,
+outputWithTagScheme,
+removeRecommendContent,
+decompositCommand
+"""
 
 def getWordTagPairs(tagedSentence, seged=True, tagScheme="BMES", onlyNP=False, entityRe=r'\[\@.*?\#.*?\*\]'):
+    """
+    ??? Produce tag/entity pairs
+    """
     newSent = tagedSentence.strip('\n').decode('utf-8')
     filterList = re.findall(entityRe, newSent)
     newSentLength = len(newSent)
@@ -784,6 +894,9 @@ def getWordTagPairs(tagedSentence, seged=True, tagScheme="BMES", onlyNP=False, e
 
 
 def turnFullListToOutputPair(fullList, seged=True, tagScheme="BMES", onlyNP=False):
+    """
+    Break full list down to list of pairs.
+    """
     pairList = []
     for eachList in fullList:
         if eachList[3]:
@@ -811,6 +924,9 @@ def turnFullListToOutputPair(fullList, seged=True, tagScheme="BMES", onlyNP=Fals
 
 
 def outputWithTagScheme(input_list, label, tagScheme="BMES"):
+    """
+    Add particular tagging scheme to the output file.
+    """
     output_list = []
     list_length = len(input_list)
     if tagScheme=="BMES":
@@ -837,6 +953,9 @@ def outputWithTagScheme(input_list, label, tagScheme="BMES"):
 
 
 def removeRecommendContent(content, recommendRe = r'\[\$.*?\#.*?\*\](?!\#)'):
+    """
+    ??? Remove the recommender's output from the given content.
+    """
     output_content = ""
     last_match_end = 0
     for match in re.finditer(recommendRe, content):
@@ -849,6 +968,9 @@ def removeRecommendContent(content, recommendRe = r'\[\$.*?\#.*?\*\](?!\#)'):
 
 
 def decompositCommand(command_string):
+    """
+    Decompose the command string into its commands.
+    """
     command_list = []
     each_command = []
     num_select = ''
@@ -866,6 +988,9 @@ def decompositCommand(command_string):
 
 
 def main():
+    """
+    Launch the Annotator.
+    """
     print("SUTDAnnotator launched!")
     print(("OS:%s")%(platform.system()))
     root = Tk()
