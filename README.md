@@ -59,7 +59,8 @@ Intelligent recommendation:
 
 The annotated results will be stored synchronously. Annotated file is located
 at the same directory as the original file with the name of ***"original name
-+ .ann"***
++ .ann"*** Please also note that the shortcut map can be switched seamlessly
+in the right bottom drop-down list.
 
 Use as an administrator
 ====
@@ -95,7 +96,7 @@ Important features:
 4. Confirm or remove recommended entity: put cursor inside of the entity span
    and press `y` (yes) or `q` (quit).
 5. In the command entry, just type `Enter` without any command, the cursor in
-   text will move to the head of next line. (You can monitor this with "Cursor").
+   text will move to the head of next line. (You can monitor this in "Cursor").
 6. "Cursor" shows the current cursor position, with the row and column number
    represented in `row` and `col` respectively.
 7. The "Export" button will export the ***".ann"*** file as a sequence file,
@@ -125,6 +126,7 @@ as follows:
 
 Updating...
 ====
+* 2018-Oct-20, YEDDA has a slight update in which shortcut maps can be edited, stored and switched seamlessly.
 * 2018-May-07, Repository is renamed as YEDDA now!
 * 2018-May-01, Our paper has been accepted as a demonstration at ACL 2018.
 * 2017-Sep-27, (YEDDA V 1.0): project was officially named as YEDDA ! See our paper [here](https://arxiv.org/pdf/1711.03759.pdf).
